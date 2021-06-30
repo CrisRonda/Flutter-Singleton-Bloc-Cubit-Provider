@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:states/models/user.dart';
+import 'package:states/services/user_service.dart';
 
 class HomePage extends StatelessWidget {
   @override
@@ -10,12 +12,23 @@ class HomePage extends StatelessWidget {
       floatingActionButton: FloatingActionButton(
           child: Icon(Icons.ac_unit),
           onPressed: () => Navigator.pushNamed(context, 'details')),
-      body: UserDetails(),
+      body: StreamBuilder(
+        stream: userService.userStream,
+        builder: (BuildContext context, AsyncSnapshot<User> snapshot) {
+          return snapshot.hasData
+              ? UserDetails(userService.user)
+              : Center(child: Text("Usuario no existe"));
+        },
+      ),
     );
   }
 }
 
 class UserDetails extends StatelessWidget {
+  final User user;
+
+  const UserDetails(this.user);
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -32,10 +45,10 @@ class UserDetails extends StatelessWidget {
           ),
           Divider(),
           ListTile(
-            title: Text("Nombre"),
+            title: Text(this.user.name),
           ),
           ListTile(
-            title: Text("Edad"),
+            title: Text(this.user.age.toString()),
           ),
           Text(
             'Profesiones',

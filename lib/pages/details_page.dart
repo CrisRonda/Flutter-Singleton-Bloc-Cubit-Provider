@@ -1,18 +1,31 @@
 import 'package:flutter/material.dart';
+import 'package:states/models/user.dart';
+import 'package:states/services/user_service.dart';
 
 class DetailsPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Details"),
+        title: StreamBuilder(
+          stream: userService.userStream,
+          builder: (BuildContext context, AsyncSnapshot<User> snapshot) {
+            return Container(
+              child: Text(userService.existUser
+                  ? 'Hola: ${userService.user.name}!'
+                  : "Setup"),
+            );
+          },
+        ),
       ),
       body: Center(
         child: Column(
           children: [
             Text('Hola Mundo'),
             MaterialButton(
-              onPressed: () {},
+              onPressed: () {
+                userService.setUser(User(name: "Cristian", age: 12));
+              },
               child: Text("Establecer usuario",
                   style: TextStyle(
                     color: Colors.white,
@@ -20,7 +33,11 @@ class DetailsPage extends StatelessWidget {
               color: Colors.blue,
             ),
             MaterialButton(
-              onPressed: () {},
+              onPressed: () {
+                if (userService.existUser) {
+                  userService.setAge(35);
+                }
+              },
               child: Text("Establecer edad",
                   style: TextStyle(
                     color: Colors.white,

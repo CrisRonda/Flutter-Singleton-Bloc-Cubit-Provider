@@ -1,21 +1,38 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:states/models/user.dart';
+import 'package:states/services/user_service.dart';
 
 class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    final userService = Provider.of<UserService>(context);
     return Scaffold(
       appBar: AppBar(
         title: Text("Home"),
+        actions: [
+          userService.existUser
+              ? IconButton(
+                  onPressed: userService.removeUser, icon: Icon(Icons.logout))
+              : SizedBox.shrink(),
+        ],
       ),
       floatingActionButton: FloatingActionButton(
           child: Icon(Icons.ac_unit),
           onPressed: () => Navigator.pushNamed(context, 'details')),
-      body: UserDetails(),
+      body: userService.existUser
+          ? UserDetails(userService.user)
+          : Center(
+              child: Text("Sin datos de usuario"),
+            ),
     );
   }
 }
 
 class UserDetails extends StatelessWidget {
+  final User user;
+
+  const UserDetails(this.user);
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -32,10 +49,10 @@ class UserDetails extends StatelessWidget {
           ),
           Divider(),
           ListTile(
-            title: Text("Nombre"),
+            title: Text(user.name),
           ),
           ListTile(
-            title: Text("Edad"),
+            title: Text(user.age.toString()),
           ),
           Text(
             'Profesiones',
@@ -43,12 +60,13 @@ class UserDetails extends StatelessWidget {
                 color: Colors.amber, fontSize: 19, fontWeight: FontWeight.w800),
           ),
           Divider(),
-          ListTile(
-            title: Text("Profesion 1"),
-          ),
-          ListTile(
-            title: Text("Profesion 2"),
-          ),
+          ...this
+              .user
+              .professions
+              .map((item) => ListTile(
+                    title: Text(item),
+                  ))
+              .toList(),
         ],
       ),
     );

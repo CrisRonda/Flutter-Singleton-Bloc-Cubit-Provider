@@ -1,21 +1,39 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:states/bloc/user/user_bloc.dart';
+import 'package:states/models/user.dart';
 
 class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text("Home"),
-      ),
-      floatingActionButton: FloatingActionButton(
-          child: Icon(Icons.ac_unit),
-          onPressed: () => Navigator.pushNamed(context, 'details')),
-      body: UserDetails(),
-    );
+        appBar: AppBar(
+          title: Text("Home"),
+          actions: [
+            IconButton(
+                onPressed: () {
+                  BlocProvider.of<UserBloc>(context).add(DeleteUser());
+                },
+                icon: Icon(Icons.delete))
+          ],
+        ),
+        floatingActionButton: FloatingActionButton(
+            child: Icon(Icons.ac_unit),
+            onPressed: () => Navigator.pushNamed(context, 'details')),
+        body: BlocBuilder<UserBloc, UserState>(builder: (_, state) {
+          if (state.existUser) {
+            return UserDetails(state.user!);
+          }
+          return Center(child: Text("No existe informacion"));
+        }));
   }
 }
 
 class UserDetails extends StatelessWidget {
+  final User user;
+
+  const UserDetails(this.user) : super();
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -32,10 +50,10 @@ class UserDetails extends StatelessWidget {
           ),
           Divider(),
           ListTile(
-            title: Text("Nombre"),
+            title: Text(this.user.name),
           ),
           ListTile(
-            title: Text("Edad"),
+            title: Text(this.user.age.toString()),
           ),
           Text(
             'Profesiones',
@@ -43,12 +61,15 @@ class UserDetails extends StatelessWidget {
                 color: Colors.amber, fontSize: 19, fontWeight: FontWeight.w800),
           ),
           Divider(),
-          ListTile(
-            title: Text("Profesion 1"),
-          ),
-          ListTile(
-            title: Text("Profesion 2"),
-          ),
+          ...this
+              .user
+              .professions
+              .map(
+                (item) => ListTile(
+                  title: Text(item),
+                ),
+              )
+              .toList()
         ],
       ),
     );

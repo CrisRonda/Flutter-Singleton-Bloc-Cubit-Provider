@@ -14,7 +14,7 @@ git checkout -b singleton
 3. `provider`
 
 ```bash
-git checkout -b singleton
+git checkout -b provider
 ```
 
 4. `cubit`
@@ -27,4 +27,10 @@ git checkout -b cubit
 
 ```bash
 git checkout -b bloc
+```
+
+5. `getX`
+
+```bash
+git checkout -b getx
 ```

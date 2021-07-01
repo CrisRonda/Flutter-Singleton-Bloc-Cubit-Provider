@@ -1,8 +1,8 @@
 class User {
-  String name;
-  int edad;
+  String? name;
+  int? age;
   List<String> professions;
 
-  User({required this.name, required this.edad, this.professions = const []});
+  User({ this.name,  this.age, this.professions = const []});
 
 }
